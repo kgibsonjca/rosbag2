@@ -50,6 +50,13 @@ class RecordVerb(VerbExtension):
                   'It has no effect if --no-discovery is enabled.'
         )
         parser.add_argument(
+            '-d', '--max-bag-duration', type=int, default=0,
+            help='maximum duration in seconds before the bagfile will be split. '
+                  'Default is zero, recording written in single bagfile and splitting '
+                  'is disabled. If both splitting by size and duration are enabled, '
+                  'the bag will split at whichever threshold is reached first.'
+        )
+        parser.add_argument(
             '-b', '--max-bag-size', type=int, default=0,
             help='maximum size in bytes before the bagfile will be split. '
                   'Default it is zero, recording written in single bagfile and splitting '
@@ -90,7 +97,8 @@ class RecordVerb(VerbExtension):
                 all=True,
                 no_discovery=args.no_discovery,
                 polling_interval=args.polling_interval,
-                max_bagfile_size=args.max_bag_size)
+                max_bagfile_size=args.max_bag_size,
+                max_bagfile_duration=args.max_bag_duration)
         elif args.topics and len(args.topics) > 0:
             # NOTE(hidmic): in merged install workspaces on Windows, Python entrypoint lookups
             #               combined with constrained environments (as imposed by colcon test)
@@ -107,6 +115,7 @@ class RecordVerb(VerbExtension):
                 no_discovery=args.no_discovery,
                 polling_interval=args.polling_interval,
                 max_bagfile_size=args.max_bag_size,
+                max_bagfile_duration=args.max_bag_duration,
                 topics=args.topics)
         else:
             self._subparser.print_help()

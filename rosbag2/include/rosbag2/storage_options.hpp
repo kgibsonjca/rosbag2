@@ -30,7 +30,12 @@ public:
    * The maximum size a bagfile can be, in bytes, before it is split.
    * A value of 0 indicates that bagfile splitting will not be used.
    */
-  uint64_t max_bagfile_size;
+  uint64_t max_bagfile_size =0;
+
+  // The maximum duration a bagfile can be, in seconds, before it is split.
+  // A value of 0 indicates that bagfile splitting will not be used.
+  uint64_t max_bagfile_duration = 0;
+
 };
 
 }  // namespace rosbag2

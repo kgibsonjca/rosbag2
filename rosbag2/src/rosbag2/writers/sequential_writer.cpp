@@ -55,7 +55,10 @@ SequentialWriter::SequentialWriter(
   metadata_io_(std::move(metadata_io)),
   converter_(nullptr),
   max_bagfile_size_(rosbag2_storage::storage_interfaces::MAX_BAGFILE_SIZE_NO_SPLIT),
-  topics_names_to_info_(),
+  max_bagfile_duration(
+    std::chrono::seconds(rosbag2_storage::storage_interfaces::MAX_BAGFILE_DURATION_NO_SPLIT)),
+
+topics_names_to_info_(),
   metadata_()
 {}
 
@@ -78,6 +81,7 @@ void SequentialWriter::open(
   const ConverterOptions & converter_options)
 {
   max_bagfile_size_ = storage_options.max_bagfile_size;
+  max_bagfile_duration = std::chrono::seconds(storage_options.max_bagfile_duration);
   base_folder_ = storage_options.uri;
 
   if (converter_options.output_serialization_format !=
@@ -187,6 +191,7 @@ void SequentialWriter::write(std::shared_ptr<SerializedBagMessage> message)
 
   if (should_split_bagfile()) {
     split_bagfile();
+    metadata_.starting_time = std::chrono::high_resolution_clock::now();
   }
 
   const auto message_timestamp = std::chrono::time_point<std::chrono::high_resolution_clock>(
@@ -201,11 +206,25 @@ void SequentialWriter::write(std::shared_ptr<SerializedBagMessage> message)
 
 bool SequentialWriter::should_split_bagfile() const
 {
-  if (max_bagfile_size_ == rosbag2_storage::storage_interfaces::MAX_BAGFILE_SIZE_NO_SPLIT) {
-    return false;
-  } else {
-    return storage_->get_bagfile_size() > max_bagfile_size_;
+ // Assume we aren't splitting
+  bool should_split = false;
+
+  // Splitting by size
+  if (max_bagfile_size_ != rosbag2_storage::storage_interfaces::MAX_BAGFILE_SIZE_NO_SPLIT) {
+    should_split = should_split || (storage_->get_bagfile_size() > max_bagfile_size_);
   }
+
+  // Splitting by time
+  if (max_bagfile_duration != std::chrono::seconds(
+      rosbag2_storage::storage_interfaces::MAX_BAGFILE_DURATION_NO_SPLIT))
+  {
+    auto max_duration_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
+      max_bagfile_duration);
+    should_split = should_split ||
+      ((std::chrono::system_clock::now() - metadata_.starting_time) > max_duration_ns);
+  }
+
+  return should_split;
 }
 
 void SequentialWriter::finalize_metadata()

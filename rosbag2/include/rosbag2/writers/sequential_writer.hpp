@@ -113,6 +113,11 @@ private:
   // Used in bagfile splitting; specifies the best-effort maximum sub-section of a bagfile in bytes.
   uint64_t max_bagfile_size_;
 
+  // Used in bagfile splitting;
+  // specifies the best-effort maximum duration of a bagfile in seconds.
+  std::chrono::seconds max_bagfile_duration;
+
+
   // Used to track topic -> message count
   std::unordered_map<std::string, TopicInformation> topics_names_to_info_;
 
