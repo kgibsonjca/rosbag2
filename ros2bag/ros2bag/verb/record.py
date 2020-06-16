@@ -159,7 +159,6 @@ class RecordVerb(VerbExtension):
                 polling_interval=args.polling_interval,
                 max_bagfile_size=args.max_bag_size,
                 max_bagfile_duration=args.max_bag_duration,
-                topics=args.topics,
                 max_cache_size=args.max_cache_size,
                 topics=args.topics,
                 include_hidden_topics=args.include_hidden_topics,
