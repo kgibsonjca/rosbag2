@@ -64,6 +64,7 @@ pipeline {
                         parallel{
                                 stage('Build amd64') {
                                         steps {
+                                                sh("tree")
                                                 sh("docker run --rm --name ros2-build-amd64 --entrypoint \"/home/jca/workspace/src/package/rosbag2/build_package.sh\" -e BRANCH_NAME -e BUILD_NUMBER -v $PWD:/home/jca/workspace/src/package -t ${ros_build_registry}/amd64/${ros_build_image}")
                                         }
                                 }
