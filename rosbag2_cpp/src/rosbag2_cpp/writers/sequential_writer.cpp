@@ -210,6 +210,8 @@ void SequentialWriter::write(std::shared_ptr<rosbag2_storage::SerializedBagMessa
   ++topics_names_to_info_.at(message->topic_name).message_count;
 
   if (should_split_bagfile()) {
+    finalize_metadata();
+    metadata_io_->write_metadata(base_folder_, metadata_);
     split_bagfile();
     metadata_.starting_time = std::chrono::high_resolution_clock::now();
   }
