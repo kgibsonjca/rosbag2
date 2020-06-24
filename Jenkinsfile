@@ -66,7 +66,7 @@ pipeline {
                                 stage('Build amd64') {
                                         steps {
                                                 sh("pwd")
-                                                sh("bash -c \"docker run -t --rm --name ros2-build-amd64 -e BRANCH_NAME -e BUILD_NUMBER -v $PWD:/home/jca/workspace/src/package --entrypoint bash ${ros_build_registry}/amd64/${ros_build_image} -c 'ls /home/jca/workspace/src/package'\"")
+                                                sh("bash -c \"docker run -t --rm --name ros2-build-amd64 -e BRANCH_NAME -e BUILD_NUMBER -v `pwd`:/home/jca/workspace/src/package --entrypoint bash ${ros_build_registry}/amd64/${ros_build_image} -c 'ls /home/jca/workspace/src/package'\"")
                                         }
                                 }
 
@@ -78,7 +78,7 @@ pipeline {
 
                                 stage('Build arm64') {
                                         steps {
-                                                sh("bash -c \"docker run -t --rm --name ros2-build-arm64 -e BRANCH_NAME -e BUILD_NUMBER -v $PWD:/home/jca/workspace/src/package --entrypoint \"/home/jca/workspace/src/package/build_package.sh\" ${ros_build_registry}/arm64/${ros_build_image}\"")
+                                                sh("bash -c \"docker run -t --rm --name ros2-build-arm64 -e BRANCH_NAME -e BUILD_NUMBER -v `pwd`:/home/jca/workspace/src/package --entrypoint \"/home/jca/workspace/src/package/build_package.sh\" ${ros_build_registry}/arm64/${ros_build_image}\"")
                                         }
                                 }
                         }
