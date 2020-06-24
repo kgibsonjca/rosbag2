@@ -34,6 +34,7 @@ pipeline {
                                 //Always have set showing, for build diagnostics
                                 sh("set")
                                 sh("ls")
+                                sh("pwd")
                         }
                 }
 
@@ -64,6 +65,7 @@ pipeline {
                         parallel{
                                 stage('Build amd64') {
                                         steps {
+                                                sh("pwd")
                                                 sh("bash -c \"docker run -t --rm --name ros2-build-amd64 -e BRANCH_NAME -e BUILD_NUMBER -v $PWD:/home/jca/workspace/src/package --entrypoint bash ${ros_build_registry}/amd64/${ros_build_image} -c 'ls /home/jca/workspace/src/package'\"")
                                         }
                                 }
